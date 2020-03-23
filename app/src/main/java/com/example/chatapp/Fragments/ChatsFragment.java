@@ -11,9 +11,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.chatapp.Adapter.GroupAdapter;
 import com.example.chatapp.Adapter.UserAdapter;
 import com.example.chatapp.Model.Chat;
 import com.example.chatapp.Model.Chatlist;
+import com.example.chatapp.Model.Group;
 import com.example.chatapp.Model.User;
 import com.example.chatapp.R;
 import com.google.firebase.auth.FirebaseAuth;
@@ -31,17 +33,22 @@ import java.util.concurrent.CopyOnWriteArrayList;
 public class ChatsFragment extends Fragment {
 
     private RecyclerView recyclerView;
+    private RecyclerView group_recyclerView;
 
     private UserAdapter userAdapter;
+    private GroupAdapter groupAdapter;
     private List<User> mUsers;
+    private List<Group> mGroups;
 
     FirebaseUser fuser;
     DatabaseReference reference;
+    DatabaseReference groupReference;
 
     /*
     private List<String> usersList;
      */
     private List<Chatlist> usersList;
+    private List<String> groupList;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -76,35 +83,32 @@ public class ChatsFragment extends Fragment {
         });
 
 
+        group_recyclerView = view.findViewById(R.id.group_recycler_view);
+        group_recyclerView.setHasFixedSize(true);
+        group_recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        /*
-        reference = FirebaseDatabase.getInstance().getReference("Chats");
-        reference.addValueEventListener(new ValueEventListener() {
+        groupList = new ArrayList<>();
+
+        groupReference = FirebaseDatabase.getInstance().getReference("Users").child(fuser.getUid()).child("Groups");
+        groupReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-
-                usersList.clear();
-
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()){
-                    Chat chat = snapshot.getValue(Chat.class);
-
-                    if (chat.getSender().equals(fuser.getUid()) && !usersList.contains(chat.getReceiver())){
-                        usersList.add(chat.getReceiver());
-                    }
-                    if (chat.getReceiver().equals(fuser.getUid()) && !usersList.contains(chat.getSender())){
-                        usersList.add(chat.getSender());
-                    }
+                groupList.clear();
+                for(DataSnapshot snapshot : dataSnapshot.getChildren()){
+                    String group = snapshot.getKey();
+                    groupList.add(group);
                 }
 
-                readChats();
-
+                groupList();
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
 
             }
-        });*/
+        });
+
+
 
         return view;
     }
@@ -135,7 +139,64 @@ public class ChatsFragment extends Fragment {
         });
     }
 
+    private void groupList(){
+        mGroups = new ArrayList<>();
+        groupReference = FirebaseDatabase.getInstance().getReference("Groups");
+        groupReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                mGroups.clear();
+                for(DataSnapshot snapshot : dataSnapshot.getChildren()){
+                    Group group = snapshot.getValue(Group.class);
+                    for(String group1 : groupList){
+                        if(group1.equals(snapshot.getKey())){
+                            mGroups.add(group);
+                        }
+                    }
+                }
+                groupAdapter = new GroupAdapter(getContext(), mGroups);
+                group_recyclerView.setAdapter(groupAdapter);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+    }
+
     // don't use
+
+    /*
+        reference = FirebaseDatabase.getInstance().getReference("Chats");
+        reference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                usersList.clear();
+
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()){
+                    Chat chat = snapshot.getValue(Chat.class);
+
+                    if (chat.getSender().equals(fuser.getUid()) && !usersList.contains(chat.getReceiver())){
+                        usersList.add(chat.getReceiver());
+                    }
+                    if (chat.getReceiver().equals(fuser.getUid()) && !usersList.contains(chat.getSender())){
+                        usersList.add(chat.getSender());
+                    }
+                }
+
+                readChats();
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });*/
+
     /*
     private void readChats(){
         mUsers = new ArrayList<>();

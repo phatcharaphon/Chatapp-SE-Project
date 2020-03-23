@@ -115,34 +115,44 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
         final FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Chats");
 
-        reference.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                for(DataSnapshot snapshot:dataSnapshot.getChildren()){
-                    Chat chat = snapshot.getValue(Chat.class);
-                    if(chat.getReceiver().equals(firebaseUser.getUid()) && chat.getSender().equals(userid) ||
-                            chat.getReceiver().equals(userid) && chat.getSender().equals(firebaseUser.getUid())){
-                        theLastMessage = chat.getMessage();
+        if(firebaseUser!=null) {
+            reference.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                        Chat chat = snapshot.getValue(Chat.class);
+                        if (chat.getReceiver().equals(firebaseUser.getUid()) && chat.getSender().equals(userid) ||
+                                chat.getReceiver().equals(userid) && chat.getSender().equals(firebaseUser.getUid())) {
+                            if(chat.getType().equals("text"))theLastMessage = chat.getMessage();
+                            else if(chat.getType().equals("image")){
+                                if(chat.getSender().equals(firebaseUser.getUid()))theLastMessage = "You sent an image";
+                                else theLastMessage = "You received an image";
+                            }
+                            else if(chat.getType().equals("file")){
+                                if(chat.getSender().equals(firebaseUser.getUid()))theLastMessage = "You sent a file";
+                                else theLastMessage = "You received a file";
+                            }
+                        }
                     }
+
+                    switch (theLastMessage) {
+                        case "default":
+                            last_msg.setText("No Message");
+                            break;
+
+                        default:
+                            last_msg.setText(theLastMessage);
+                            break;
+                    }
+
+                    theLastMessage = "default";
                 }
 
-                switch (theLastMessage){
-                    case "default":
-                        last_msg.setText("No Message");
-                        break;
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
 
-                    default:
-                        last_msg.setText(theLastMessage);
-                        break;
                 }
-
-                theLastMessage = "default";
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
+            });
+        }
     }
 }

@@ -18,6 +18,8 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -103,7 +105,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu, menu);
-        registerForContextMenu(findViewById(menu.findItem(R.id.groups).getItemId()));
         return true;
     }
 
@@ -112,35 +113,20 @@ public class MainActivity extends AppCompatActivity {
 
         switch (item.getItemId()){
 
-            case R.id.groups:
+            case R.id.join_group:
+                Toast.makeText(MainActivity.this, "Joining...", Toast.LENGTH_SHORT).show();
+                startActivity(new Intent(MainActivity.this, JoinGroupActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
+                return true;
+
+            case R.id.create_group:
+                Toast.makeText(MainActivity.this, "Creating...", Toast.LENGTH_SHORT).show();
+                startActivity(new Intent(MainActivity.this, CreateGroupActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
                 return true;
 
             case R.id.logout:
                 FirebaseAuth.getInstance().signOut();
                 // change finish to setFlag because app will crash
                 startActivity(new Intent(MainActivity.this, StartActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
-                return true;
-        }
-
-        return false;
-    }
-
-    @Override
-    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
-        super.onCreateContextMenu(menu, v, menuInfo);
-        MenuInflater menuInflater = getMenuInflater();
-        menuInflater.inflate(R.menu.groups, menu);
-    }
-
-    @Override
-    public boolean onContextItemSelected(@NonNull MenuItem item) {
-//        return super.onContextItemSelected(item);
-        switch (item.getItemId()){
-            case R.id.join_group:
-                Toast.makeText(MainActivity.this, "Joining...", Toast.LENGTH_SHORT).show();
-                return true;
-            case R.id.create_group:
-                Toast.makeText(MainActivity.this, "Creating...", Toast.LENGTH_SHORT).show();
                 return true;
         }
 

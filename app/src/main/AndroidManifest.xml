@@ -13,10 +13,12 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity android:name=".JoinGroupActivity"></activity>
+        <activity android:name=".CreateGroupActivity" />
+        <activity android:name=".GroupActivity" />
         <activity
             android:name=".ResetPasswordActivity"
-            android:parentActivityName=".LoginActivity"
-            ></activity>
+            android:parentActivityName=".LoginActivity" />
         <activity android:name=".MessageActivity" />
         <activity
             android:name=".LoginActivity"

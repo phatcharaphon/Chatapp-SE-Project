@@ -29,10 +29,41 @@
             android:textColor="#fff"
             android:padding="8dp" />
 
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/background_right"
+            android:adjustViewBounds="true"
+            android:maxWidth="250dp"
+            android:id="@+id/show_image"
+            android:visibility="gone"
+            android:textSize="18sp"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:textColor="#fff"
+            android:padding="8dp" />
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/txt_seen"
+            android:layout_below="@+id/show_message"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/txt_seen1"
+            android:layout_below="@+id/show_image"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/username"
+            android:visibility="gone"
             android:layout_below="@+id/show_message"
             android:layout_alignParentRight="true"
             android:layout_alignParentEnd="true"/>
